@@ -1,0 +1,39 @@
+/* public/style.css (enhanced for beautiful UI, dark mode support) */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(to bottom right, #1e3a8a, #312e81);
+  }
+  main {
+    background: #1f2937;
+    color: #d1d5db;
+  }
+  input, textarea {
+    background: #374151;
+    border-color: #4b5563;
+    color: #d1d5db;
+  }
+  input:focus, textarea:focus {
+    ring-color: #6366f1;
+  }
+  #content {
+    background: #111827;
+  }
+  .text-gray-800 {
+    color: #e5e7eb;
+  }
+  .text-gray-600 {
+    color: #9ca3af;
+  }
+  .text-gray-500 {
+    color: #9ca3af;
+  }
+  .bg-gray-100 {
+    background: #374151;
+  }
+}
+
+pre code {
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
