@@ -1,4 +1,3 @@
-<!-- public/index.html (redesigned UI, removed search, modern and beautiful) -->
 <!doctype html>
 <html lang="vi">
 <head>
@@ -8,23 +7,27 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col items-center justify-center p-4">
-  <header class="w-full max-w-4xl mb-8">
+<body class="bg-gradient-to-br from-indigo-100 to-blue-200 min-h-screen flex flex-col items-center p-4 sm:p-6">
+  <header class="w-full max-w-3xl mx-auto mb-8">
     <nav class="flex justify-between items-center">
-      <h1 class="text-3xl font-bold text-indigo-700">PastepinFree</h1>
-      <a href="/profile.html" class="text-indigo-600 hover:text-indigo-800">Profile</a>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-indigo-800 tracking-tight">PastepinFree</h1>
+      <a href="/profile.html" class="text-indigo-600 hover:text-indigo-900 font-medium">Profile</a>
     </nav>
   </header>
 
-  <main class="w-full max-w-4xl bg-white rounded-xl shadow-lg p-8">
+  <main class="w-full max-w-3xl bg-white rounded-2xl shadow-xl p-6 sm:p-8">
     <section>
-      <h2 class="text-2xl font-semibold mb-4 text-gray-800">Tạo Paste Mới</h2>
-      <input id="title" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Tiêu đề (tùy chọn)">
-      <textarea id="content" class="w-full p-3 mb-4 border border-gray-300 rounded-lg h-64 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Nhập văn bản / code..." spellcheck="false"></textarea>
-      <button id="btnSave" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-200">Lưu Paste</button>
-      <div id="saveResult" class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200"></div>
+      <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Tạo Paste Mới</h2>
+      <input id="title" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Tiêu đề (tùy chọn)">
+      <textarea id="content" class="w-full p-3 mb-4 border border-gray-300 rounded-lg h-64 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500 transition font-mono text-sm" placeholder="Nhập văn bản hoặc code..." spellcheck="false"></textarea>
+      <button id="btnSave" class="w-full sm:w-auto bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-200 font-medium">Lưu Paste</button>
+      <div id="saveResult" class="mt-4 p-4 bg-indigo-50 rounded-lg border border-indigo-200 text-sm"></div>
     </section>
   </main>
+
+  <footer class="mt-8 text-gray-600 text-sm">
+    <p>© 2025 PastepinFree. All rights reserved.</p>
+  </footer>
 
   <script src="/script.js"></script>
 </body>
