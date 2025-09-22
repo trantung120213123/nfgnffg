@@ -1,0 +1,107 @@
+<!-- public/view.html (redesigned UI, modern and beautiful with syntax highlighting) -->
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>View Paste — PastepinFree</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col items-center justify-center p-4">
+  <header class="w-full max-w-4xl mb-8">
+    <nav class="flex justify-between items-center">
+      <a href="/" class="text-indigo-600 hover:text-indigo-800">Home</a>
+      <a href="/profile.html" class="text-indigo-600 hover:text-indigo-800">Profile</a>
+    </nav>
+  </header>
+
+  <main class="w-full max-w-4xl bg-white rounded-xl shadow-lg p-8">
+    <h2 id="title" class="text-2xl font-semibold mb-2 text-gray-800">Loading...</h2>
+    <div id="meta" class="text-sm text-gray-500 mb-4"></div>
+    <pre id="content" class="bg-gray-900 p-4 rounded-lg overflow-x-auto"><code>Loading...</code></pre>
+    <div id="ownerArea" class="mt-4" style="display:none">
+      <button id="editBtn" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600">Edit</button>
+    </div>
+    <p class="mt-4"><a id="rawLink" href="#" class="text-indigo-600 hover:underline">Raw</a></p>
+  </main>
+
+  <script>
+  (async function(){
+    const path = window.location.pathname;
+    const id = path.slice(1);
+    if (!id) { document.getElementById('title').innerText = 'Invalid id'; return; }
+
+    async function load() {
+      const res = await fetch('/api/get/' + id);
+      if (res.status !== 200) {
+        document.getElementById('title').innerText = 'Paste not found';
+        document.getElementById('content').querySelector('code').innerText = '';
+        return;
+      }
+      const j = await res.json();
+      document.getElementById('title').innerText = j.title || 'Untitled';
+      document.getElementById('content').querySelector('code').innerText = j.content;
+      hljs.highlightElement(document.getElementById('content').querySelector('code'));
+      document.getElementById('meta').innerText = 'Created: ' + (j.created_at || '');
+      document.getElementById('rawLink').href = '/raw/' + id;
+
+      const token = getCookie('owner_token') || '';
+      if (!token) return;
+      const chk = await fetch('/api/is_owner/' + id, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      });
+      const cj = await chk.json();
+      if (cj.owner) {
+        document.getElementById('ownerArea').style.display = 'block';
+        document.getElementById('editBtn').onclick = startEdit;
+      }
+    }
+
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? match[2] : null;
+    }
+
+    function escapeHtml(s) { 
+      return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); 
+    }
+
+    function startEdit() {
+      const curTitle = document.getElementById('title').innerText;
+      const curContent = document.getElementById('content').querySelector('code').innerText;
+      document.getElementById('content').innerHTML = `
+        <input id="editTitle" value="${escapeHtml(curTitle)}" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <textarea id="editContent" class="w-full p-3 mb-4 border border-gray-300 rounded-lg h-64 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500" style="font-family:monospace;">${escapeHtml(curContent)}</textarea>
+        <div class="flex space-x-4">
+          <button id="saveBtn" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600">Save</button>
+          <button id="cancelBtn" class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600">Cancel</button>
+        </div>
+      `;
+      document.getElementById('saveBtn').onclick = async () => {
+        const newTitle = document.getElementById('editTitle').value;
+        const newContent = document.getElementById('editContent').value;
+        const token = getCookie('owner_token') || '';
+        const r = await fetch('/api/edit/' + id, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: newTitle, content: newContent, token })
+        });
+        if (r.status !== 200) {
+          const jr = await r.json();
+          return alert(jr.error || 'Error');
+        }
+        location.reload();
+      };
+      document.getElementById('cancelBtn').onclick = () => location.reload();
+    }
+
+    await load();
+  })();
+  </script>
+</body>
+</html>
