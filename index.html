@@ -1,0 +1,31 @@
+<!-- public/index.html (redesigned UI, removed search, modern and beautiful) -->
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PastepinFree — Modern Pastebin</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col items-center justify-center p-4">
+  <header class="w-full max-w-4xl mb-8">
+    <nav class="flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-indigo-700">PastepinFree</h1>
+      <a href="/profile.html" class="text-indigo-600 hover:text-indigo-800">Profile</a>
+    </nav>
+  </header>
+
+  <main class="w-full max-w-4xl bg-white rounded-xl shadow-lg p-8">
+    <section>
+      <h2 class="text-2xl font-semibold mb-4 text-gray-800">Tạo Paste Mới</h2>
+      <input id="title" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Tiêu đề (tùy chọn)">
+      <textarea id="content" class="w-full p-3 mb-4 border border-gray-300 rounded-lg h-64 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Nhập văn bản / code..." spellcheck="false"></textarea>
+      <button id="btnSave" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-200">Lưu Paste</button>
+      <div id="saveResult" class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200"></div>
+    </section>
+  </main>
+
+  <script src="/script.js"></script>
+</body>
+</html>
