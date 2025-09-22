@@ -1,0 +1,106 @@
+<!-- public/profile.html (redesigned UI, modern and beautiful) -->
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profile — PastepinFree</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col items-center justify-center p-4">
+  <header class="w-full max-w-4xl mb-8">
+    <nav class="flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-indigo-700">Profile</h1>
+      <a href="/" class="text-indigo-600 hover:text-indigo-800">Home</a>
+    </nav>
+  </header>
+
+  <main class="w-full max-w-4xl bg-white rounded-xl shadow-lg p-8">
+    <p class="mb-4 text-gray-600">Profile dựa trên cookie <code>owner_token</code>. Tạo paste để xem danh sách.</p>
+    <button id="btnLoad" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 mb-6">Load my pastes</button>
+    <ul id="myList" class="space-y-4"></ul>
+
+    <div id="editArea" class="mt-8" style="display:none">
+      <h3 class="text-xl font-semibold mb-4">Chỉnh sửa paste</h3>
+      <input id="editTitle" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Tiêu đề">
+      <textarea id="editContent" class="w-full p-3 mb-4 border border-gray-300 rounded-lg h-64 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+      <div class="flex space-x-4">
+        <button id="saveEdit" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600">Lưu</button>
+        <button id="cancelEdit" class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600">Huỷ</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? match[2] : null;
+  }
+
+  document.getElementById('btnLoad').onclick = async () => {
+    const token = getCookie('owner_token') || "";
+    if (!token) return alert("Không có token trong cookie. Tạo 1 paste trên trình duyệt này.");
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ token })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const j = await res.json();
+      if (j.error) throw new Error(j.error);
+      const ul = document.getElementById('myList'); ul.innerHTML = '';
+      j.results.forEach(p => {
+        const li = document.createElement('li');
+        li.className = 'bg-gray-100 p-4 rounded-lg flex justify-between items-center';
+        li.innerHTML = `
+          <div>
+            <a href="/${p.id}" target="_blank" class="text-indigo-600 hover:underline font-medium">${p.title || 'Untitled'}</a>
+            <span class="text-gray-500 ml-2 text-sm">- ${p.created_at}</span>
+          </div>
+          <button data-id="${p.id}" class="editBtn bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Edit</button>
+        `;
+        ul.appendChild(li);
+      });
+      document.querySelectorAll('.editBtn').forEach(b => {
+        b.onclick = async (e) => {
+          const id = e.target.dataset.id;
+          try {
+            const rr = await fetch('/api/get/' + id);
+            if (!rr.ok) throw new Error(`HTTP ${rr.status}`);
+            const json = await rr.json();
+            document.getElementById('editTitle').value = json.title || '';
+            document.getElementById('editContent').value = json.content || '';
+            document.getElementById('editArea').style.display = 'block';
+            document.getElementById('saveEdit').onclick = async () => {
+              const token = getCookie('owner_token') || "";
+              try {
+                const up = await fetch('/api/edit/' + id, {
+                  method: 'POST',
+                  headers: {'Content-Type':'application/json'},
+                  body: JSON.stringify({ title: document.getElementById('editTitle').value, content: document.getElementById('editContent').value, token })
+                });
+                if (!up.ok) {
+                  const r = await up.json();
+                  throw new Error(r.error || 'Error');
+                }
+                alert('Saved'); 
+                location.reload();
+              } catch (err) {
+                alert('Save failed: ' + err.message);
+              }
+            };
+            document.getElementById('cancelEdit').onclick = () => { document.getElementById('editArea').style.display = 'none'; };
+          } catch (err) {
+            alert('Load paste failed: ' + err.message);
+          }
+        };
+      });
+    } catch (err) {
+      alert('Load failed: ' + err.message);
+    }
+  };
+  </script>
+</body>
+</html>
