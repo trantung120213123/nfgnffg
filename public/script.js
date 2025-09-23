@@ -25,7 +25,7 @@ async function savePaste() {
   }
 
   try {
-    const res = await fetch('/api/new', {
+    const res = await fetch('https://josefa-unlean-evangelina.ngrok-free.dev/api/new', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, content })
@@ -72,3 +72,4 @@ function escapeHtml(s) {
   if (!s) return ''; 
   return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); 
 }
+
