@@ -1,4 +1,4 @@
-/* public/style.css (custom styles to enhance Tailwind) */
+/* public/style.css (enhanced for beautiful UI, dark mode support) */
 @media (prefers-color-scheme: dark) {
   body {
     background: linear-gradient(to bottom right, #1e3a8a, #312e81);
@@ -6,7 +6,6 @@
   main {
     background: #1f2937;
     color: #d1d5db;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
   input, textarea {
     background: #374151;
@@ -14,7 +13,7 @@
     color: #d1d5db;
   }
   input:focus, textarea:focus {
-    --tw-ring-color: #6366f1;
+    ring-color: #6366f1;
   }
   #content {
     background: #111827;
@@ -28,30 +27,13 @@
   .text-gray-500 {
     color: #9ca3af;
   }
-  .bg-gray-50 {
+  .bg-gray-100 {
     background: #374151;
-  }
-  .bg-indigo-50 {
-    background: #3730a3;
-    border-color: #4f46e5;
   }
 }
 
 pre code {
-  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
-  font-size: 0.875rem;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 14px;
   line-height: 1.5;
-}
-
-textarea {
-  resize: vertical;
-}
-
-.animate-pulse {
-  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
 }
