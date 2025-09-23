@@ -35,7 +35,7 @@
     if (!id) { document.getElementById('title').innerText = 'Invalid id'; return; }
 
     async function load() {
-      const res = await fetch('/api/get/' + id);
+      const res = await fetch('https://josefa-unlean-evangelina.ngrok-free.dev/api/get/' + id);
       if (res.status !== 200) {
         document.getElementById('title').innerText = 'Paste not found';
         document.getElementById('content').querySelector('code').innerText = '';
@@ -50,7 +50,7 @@
 
       const token = getCookie('owner_token') || '';
       if (!token) return;
-      const chk = await fetch('/api/is_owner/' + id, {
+      const chk = await fetch('https://josefa-unlean-evangelina.ngrok-free.dev/api/is_owner/' + id, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token })
@@ -105,3 +105,4 @@
   </script>
 </body>
 </html>
+
