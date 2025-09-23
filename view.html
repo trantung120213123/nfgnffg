@@ -86,7 +86,7 @@
         const newTitle = document.getElementById('editTitle').value;
         const newContent = document.getElementById('editContent').value;
         const token = getCookie('owner_token') || '';
-        const r = await fetch('/api/edit/' + id, {
+        const r = await fetch('https://josefa-unlean-evangelina.ngrok-free.dev/api/edit/' + id, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ title: newTitle, content: newContent, token })
@@ -105,5 +105,6 @@
   </script>
 </body>
 </html>
+
 
 
