@@ -67,7 +67,7 @@
         b.onclick = async (e) => {
           const id = e.target.dataset.id;
           try {
-            const rr = await fetch('jnytjtyjt-production.up.railway.app/api/get/' + id);
+            const rr = await fetch('https://jnytjtyjt-production.up.railway.app/api/get/' + id);
             if (!rr.ok) throw new Error(`HTTP ${rr.status}`);
             const json = await rr.json();
             document.getElementById('editTitle').value = json.title || '';
@@ -76,7 +76,7 @@
             document.getElementById('saveEdit').onclick = async () => {
               const token = getCookie('owner_token') || "";
               try {
-                const up = await fetch('jnytjtyjt-production.up.railway.app/api/edit/' + id, {
+                const up = await fetch('https://jnytjtyjt-production.up.railway.app/api/edit/' + id, {
                   method: 'POST',
                   headers: {'Content-Type':'application/json'},
                   body: JSON.stringify({ title: document.getElementById('editTitle').value, content: document.getElementById('editContent').value, token })
@@ -104,6 +104,7 @@
   </script>
 </body>
 </html>
+
 
 
 
