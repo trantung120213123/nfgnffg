@@ -42,7 +42,7 @@
     const token = getCookie('owner_token') || "";
     if (!token) return alert("Không có token trong cookie. Tạo 1 paste trên trình duyệt này.");
     try {
-      const res = await fetch('jnytjtyjt-production.up.railway.app/api/profile', {
+      const res = await fetch('https://jnytjtyjt-production.up.railway.app/api/profile', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({ token })
@@ -104,5 +104,6 @@
   </script>
 </body>
 </html>
+
 
 
