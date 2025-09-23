@@ -83,7 +83,7 @@ app.post("/api/new", (req, res) => {
         console.error("Insert err:", err);
         return res.status(500).json({ error: "Lỗi lưu DB" });
       }
-      const baseUrl = process.env.NODE_ENV === 'production' ? 'https://yourdomain.com' : `http://localhost:${PORT}`;
+      const baseUrl = process.env.NODE_ENV === 'production' ? 'https://freepaste1.onrender.com' : `http://localhost:${PORT}`;
       const pasteUrl = `${baseUrl}/${id}`;
       const rawUrl = `${baseUrl}/raw/${id}`;
       res.cookie("owner_token", owner_token, { maxAge: 10 * 365 * 24 * 3600 * 1000, httpOnly: false, sameSite: "lax", secure: process.env.NODE_ENV === 'production' });
@@ -190,3 +190,4 @@ process.on('SIGTERM', () => {
 });
 
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+
