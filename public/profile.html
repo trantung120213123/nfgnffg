@@ -1,3 +1,4 @@
+<!-- public/profile.html (redesigned UI, modern and beautiful) -->
 <!doctype html>
 <html lang="vi">
 <head>
@@ -7,26 +8,26 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
 </head>
-<body class="bg-gradient-to-br from-indigo-100 to-blue-200 min-h-screen flex flex-col items-center p-4 sm:p-6">
-  <header class="w-full max-w-3xl mx-auto mb-8">
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col items-center justify-center p-4">
+  <header class="w-full max-w-4xl mb-8">
     <nav class="flex justify-between items-center">
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-indigo-800 tracking-tight">Profile</h1>
-      <a href="/" class="text-indigo-600 hover:text-indigo-900 font-medium">Home</a>
+      <h1 class="text-3xl font-bold text-indigo-700">Profile</h1>
+      <a href="/" class="text-indigo-600 hover:text-indigo-800">Home</a>
     </nav>
   </header>
 
-  <main class="w-full max-w-3xl bg-white rounded-2xl shadow-xl p-6 sm:p-8">
-    <p class="mb-4 text-gray-600 text-sm sm:text-base">Danh sách các paste của bạn dựa trên cookie <code class="bg-gray-100 px-1 rounded">owner_token</code>. Tạo paste mới để quản lý tại đây.</p>
-    <button id="btnLoad" class="w-full sm:w-auto bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition font-medium mb-6">Tải danh sách paste</button>
-    <ul id="myList" class="space-y-3"></ul>
+  <main class="w-full max-w-4xl bg-white rounded-xl shadow-lg p-8">
+    <p class="mb-4 text-gray-600">Profile dựa trên cookie <code>owner_token</code>. Tạo paste để xem danh sách.</p>
+    <button id="btnLoad" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 mb-6">Load my pastes</button>
+    <ul id="myList" class="space-y-4"></ul>
 
-    <div id="editArea" class="mt-6" style="display:none">
-      <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Chỉnh sửa Paste</h3>
-      <input id="editTitle" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Tiêu đề">
-      <textarea id="editContent" class="w-full p-3 mb-4 border border-gray-300 rounded-lg h-64 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500 transition font-mono text-sm"></textarea>
+    <div id="editArea" class="mt-8" style="display:none">
+      <h3 class="text-xl font-semibold mb-4">Chỉnh sửa paste</h3>
+      <input id="editTitle" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Tiêu đề">
+      <textarea id="editContent" class="w-full p-3 mb-4 border border-gray-300 rounded-lg h-64 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
       <div class="flex space-x-4">
-        <button id="saveEdit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition font-medium">Lưu</button>
-        <button id="cancelEdit" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition font-medium">Hủy</button>
+        <button id="saveEdit" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600">Lưu</button>
+        <button id="cancelEdit" class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600">Huỷ</button>
       </div>
     </div>
   </main>
@@ -39,31 +40,26 @@
 
   document.getElementById('btnLoad').onclick = async () => {
     const token = getCookie('owner_token') || "";
-    if (!token) return alert("Chưa tạo paste nào. Vào trang chủ để tạo paste!");
+    if (!token) return alert("Không có token trong cookie. Tạo 1 paste trên trình duyệt này.");
     try {
       const res = await fetch('/api/profile', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type':'application/json'},
         body: JSON.stringify({ token })
       });
-      if (!res.ok) throw new Error(`Lỗi HTTP ${res.status}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const j = await res.json();
       if (j.error) throw new Error(j.error);
-      const ul = document.getElementById('myList');
-      ul.innerHTML = '';
-      if (j.results.length === 0) {
-        ul.innerHTML = '<li class="text-gray-500">Chưa có paste nào.</li>';
-        return;
-      }
+      const ul = document.getElementById('myList'); ul.innerHTML = '';
       j.results.forEach(p => {
         const li = document.createElement('li');
-        li.className = 'bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm';
+        li.className = 'bg-gray-100 p-4 rounded-lg flex justify-between items-center';
         li.innerHTML = `
           <div>
-            <a href="/${p.id}" target="_blank" class="text-indigo-600 hover:text-indigo-900 font-medium">${p.title || 'Untitled'}</a>
-            <span class="text-gray-500 text-sm ml-2">${new Date(p.created_at).toLocaleString('vi-VN')}</span>
+            <a href="/${p.id}" target="_blank" class="text-indigo-600 hover:underline font-medium">${p.title || 'Untitled'}</a>
+            <span class="text-gray-500 ml-2 text-sm">- ${p.created_at}</span>
           </div>
-          <button data-id="${p.id}" class="editBtn bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600 transition font-medium">Sửa</button>
+          <button data-id="${p.id}" class="editBtn bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Edit</button>
         `;
         ul.appendChild(li);
       });
@@ -72,7 +68,7 @@
           const id = e.target.dataset.id;
           try {
             const rr = await fetch('/api/get/' + id);
-            if (!rr.ok) throw new Error(`Lỗi HTTP ${rr.status}`);
+            if (!rr.ok) throw new Error(`HTTP ${rr.status}`);
             const json = await rr.json();
             document.getElementById('editTitle').value = json.title || '';
             document.getElementById('editContent').value = json.content || '';
@@ -82,27 +78,27 @@
               try {
                 const up = await fetch('/api/edit/' + id, {
                   method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
+                  headers: {'Content-Type':'application/json'},
                   body: JSON.stringify({ title: document.getElementById('editTitle').value, content: document.getElementById('editContent').value, token })
                 });
                 if (!up.ok) {
                   const r = await up.json();
-                  throw new Error(r.error || 'Lỗi không xác định');
+                  throw new Error(r.error || 'Error');
                 }
-                alert('Đã lưu thành công!');
+                alert('Saved'); 
                 location.reload();
               } catch (err) {
-                alert('Lưu thất bại: ' + err.message);
+                alert('Save failed: ' + err.message);
               }
             };
             document.getElementById('cancelEdit').onclick = () => { document.getElementById('editArea').style.display = 'none'; };
           } catch (err) {
-            alert('Tải paste thất bại: ' + err.message);
+            alert('Load paste failed: ' + err.message);
           }
         };
       });
     } catch (err) {
-      alert('Tải danh sách thất bại: ' + err.message);
+      alert('Load failed: ' + err.message);
     }
   };
   </script>
