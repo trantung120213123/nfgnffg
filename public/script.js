@@ -1,4 +1,4 @@
-// public/script.js (optimized for Vercel, modern UI feedback)
+// public/script.js (simplified, removed search, with localStorage draft)
 document.getElementById('btnSave').onclick = savePaste;
 
 // Load draft from localStorage
@@ -17,10 +17,10 @@ async function savePaste() {
   const title = document.getElementById('title').value.trim();
   const content = document.getElementById('content').value;
   const saveResult = document.getElementById('saveResult');
-  saveResult.innerHTML = '<p class="text-indigo-600 animate-pulse">Đang lưu...</p>';
+  saveResult.innerHTML = '<p class="text-blue-600">Đang lưu...</p>';
 
   if (!content || !content.trim()) {
-    saveResult.innerHTML = '<p class="text-red-600">Nội dung không được để trống!</p>';
+    saveResult.innerHTML = '<p class="text-red-600">Nội dung không được trống!</p>';
     return;
   }
 
@@ -33,28 +33,32 @@ async function savePaste() {
 
     if (!res.ok) {
       const jr = await res.json();
-      throw new Error(jr.error || `Lỗi HTTP ${res.status}`);
+      throw new Error(jr.error || `HTTP ${res.status}`);
     }
 
     const j = await res.json();
     if (!j.id || !j.url || !j.raw) {
-      throw new Error('Phản hồi server không hợp lệ');
+      throw new Error('Invalid response from server');
     }
 
+    // Set cookie client-side as well
     if (j.token) document.cookie = `owner_token=${j.token};path=/;max-age=${10*365*24*3600}`;
     
+    // Display links
     saveResult.innerHTML = `
-      <p class="text-green-600 font-medium">Đã lưu paste thành công!</p>
-      <p><b>Paste:</b> <a href="${escapeHtml(j.url)}" target="_blank" class="text-indigo-600 hover:text-indigo-900 underline">${escapeHtml(j.url)}</a></p>
-      <p><b>Raw:</b> <a href="${escapeHtml(j.raw)}" target="_blank" class="text-indigo-600 hover:text-indigo-900 underline">${escapeHtml(j.raw)}</a></p>
-      <p class="text-gray-500 text-sm">Token: ${escapeHtml(j.token.slice(0,8))}... (đã lưu vào cookie)</p>
+      <p class="text-green-600 font-medium">Paste đã lưu!</p>
+      <p><b>Paste:</b> <a href="${escapeHtml(j.url)}" target="_blank" class="text-indigo-600 hover:underline">${escapeHtml(j.url)}</a></p>
+      <p><b>Raw:</b> <a href="${escapeHtml(j.raw)}" target="_blank" class="text-indigo-600 hover:underline">${escapeHtml(j.raw)}</a></p>
+      <p class="text-sm text-gray-500">Token: ${escapeHtml(j.token.slice(0,8))}... (saved in cookie)</p>
     `;
     
+    // Clear inputs and localStorage
     document.getElementById('content').value = '';
     document.getElementById('title').value = '';
     localStorage.removeItem('draftTitle');
     localStorage.removeItem('draftContent');
 
+    // Clear result after 10 seconds
     setTimeout(() => { saveResult.innerHTML = ''; }, 10000);
 
     console.log('Saved:', j);
